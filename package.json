@@ -1,7 +1,7 @@
 {
     "name": "re-structure",
     "version": "0.0.1",
-    "description": "React application structure",
+    "description": "A pattern for structuring React applications",
     "license": "MIT",
     "repository": {
         "type": "git",
