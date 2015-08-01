@@ -1,0 +1,40 @@
+{
+    "name": "re-structure",
+    "version": "0.0.1",
+    "description": "React application structure",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/loopmachine/re-structure.git"
+    },
+    "keywords": [
+        "react",
+        "structure"
+    ],
+    "dependencies": {
+        "react": "latest",
+        "baconjs": "latest"
+    },
+    "devDependencies": {
+        "babel": "latest",
+        "babel-core": "latest",
+        "babel-runtime": "latest",
+        "babel-loader": "latest",
+        "jsx-loader": "latest",
+        "style-loader": "latest",
+        "css-loader": "latest",
+        "webpack": "latest",
+        "webpack-dev-server": "latest",
+        "html-webpack-plugin": "latest",
+        "todomvc-common": "latest",
+        "todomvc-app-css": "latest",
+        "immutable": "latest",
+        "rlite-router": "latest"
+    },
+    "main": "lib/re-structure.js",
+    "scripts": {
+        "compile": "babel src --out-dir lib",
+        "prepublish": "npm run compile",
+        "examples": "webpack-dev-server --port 8000 --hot --devtool eval-source-map --cache --colors --progress"
+    }
+}
