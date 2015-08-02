@@ -22,7 +22,7 @@ http://localhost:8000/simple.bundle
 
 ### Application DB
 
-Just like `re-frame` has one global application db structure that holds the entire application state, `re-structure` does too.  In `re-structure`, your application db is just a data stucture that you create and initialize yourself.  You can use Immutable.js, which makes rending more performant, but it's not required; you could use a regular JS object or any other data format you want.
+Just like `re-frame` has one global application db structure that holds the entire application state, `re-structure` does too.  Your application db is just a data stucture that you create and initialize yourself.  You can use Immutable.js, which makes rendering more performant, but it's not required; you could use a regular JS object or any other data structure you want.
 
 Once you initialize your db you have to register it with `re-structure` when bootstrapping your app:
 
@@ -38,7 +38,7 @@ let db = Immutable.fromJS({
 // register application db with re-structure
 initApp(db);
 
-// render the app
+// render your app
 React.render(<App />, document.body);
 ```
 
@@ -85,7 +85,9 @@ export default @View class Clock extends React.Component {
 }
 ```
 
-`Views` have one ability that distinguishes them from normal React components: they can render `projection` values reactively as they change.  When a `View` depends on a `projection`'s results, it declares so in the `static projections` property.  Then, whenever the projection has an updated value (according to `===`), the `View` is automatically re-rendered and the new value is available as a `prop` with the same name (`this.props.timer` in the example above).  This is along the same lines as how `reaction`s used in `re-frame`/`reagent`.
+`Views` have one ability that distinguishes them from normal React components: they can render `projection` values reactively as they change.  When a `View` depends on a `projection`'s results, it declares so in the `static projections` property.  Then, whenever the projection has an updated value (according to `===`), the `View` is automatically re-rendered and the new value is available as a `prop` with the same name (`this.props.timer` in the example above).  This is along the same lines as how `reaction`s are used in `re-frame`/`reagent`.
+
+Beacuse `Views` are just decorated React components, you can still keep local state, use lifecycle methods, etc.
 
 ### Commands
 
