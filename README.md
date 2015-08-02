@@ -22,11 +22,13 @@ http://localhost:8000/simple.bundle
 
 ### Application DB
 
-Just like `re-frame` has one global application db structure that holds the entire application state, `re-structure` does too.  In `re-structure`, your application db is just a data stucture that you create and initialise yourself.  You can use Immutable.js, which makes rending more performant, but it's not required; you could use a regular JS object or any other data format you want.
+Just like `re-frame` has one global application db structure that holds the entire application state, `re-structure` does too.  In `re-structure`, your application db is just a data stucture that you create and initialize yourself.  You can use Immutable.js, which makes rending more performant, but it's not required; you could use a regular JS object or any other data format you want.
 
 Once you initialize your db you have to register it with `re-structure` when bootstrapping your app:
 
 ```jsx
+import {initApp} from 're-structure';
+
 // initialize the application db
 let db = Immutable.fromJS({
     timer: new Date(),
