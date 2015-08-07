@@ -5,18 +5,22 @@ A pattern for structuring React applications.  Heavily based on the [re-frame](h
 
 The re-frame [README](https://github.com/Day8/re-frame/blob/master/README.md) pretty much says it all.  This is an approximate adaptation of that idea, meant for building JavaScript applications.
 
-### Example
+### Examples
 
-See a simple example [here](examples/simple/).
+See [here](examples).
 
-#### Run it locally:
+#### Run the examples locally:
 
 ```
 npm install
 npm run examples
 ```
 
-http://localhost:8000/simple.bundle
+Simple time/color example from `reagent`
+: http://localhost:8000/simple.bundle
+
+Switching between application "pages":
+: http://localhost:8000/pages.bundle
 
 ## Concepts
 
@@ -65,7 +69,7 @@ export function timer(db) {
 }
 ```
 
-This defines a normal function that takes the current state of the application db as a parameter and returns a "projected" view of it, exectly what the registered `sub` does in the `re-frame` example.  Note that you didn't have to do anything special like register the function or wrap the result in a `reaction`.
+This defines a normal function that takes the current state of the application db as a parameter and returns a "projected" view of it, exactly what the registered `sub` does in the `re-frame` example.  Note that you didn't have to do anything special like register the function or wrap the result in a `reaction`.
 
 ### Views
 

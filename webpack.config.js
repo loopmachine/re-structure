@@ -4,7 +4,8 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: {
-        simple: ['webpack/hot/dev-server', './examples/simple/app.js']
+        simple: ['webpack/hot/dev-server', './examples/simple/app.js'],
+        pages: ['webpack/hot/dev-server', './examples/pages/app.js']
     },
     output: {
         path: './dist',
