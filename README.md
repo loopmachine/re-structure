@@ -3,7 +3,7 @@
 
 A pattern for structuring React applications.  Heavily based on the [re-frame](https://github.com/Day8/re-frame) ClojureScript project.
 
-The re-frame [README](https://github.com/Day8/re-frame/blob/master/README.md) pretty much says it all.  This is an approximate adaptation of that idea, meant for building JavaScript projects.
+The re-frame [README](https://github.com/Day8/re-frame/blob/master/README.md) pretty much says it all.  This is an approximate adaptation of that idea, meant for building JavaScript applications.
 
 ### Example
 
@@ -88,6 +88,16 @@ export default @View class Clock extends React.Component {
 `Views` have one ability that distinguishes them from normal React components: they can render `projection` values reactively as they change.  When a `View` depends on a `projection`'s results, it declares so in the `static projections` property.  Then, whenever the projection has an updated value (according to `===`), the `View` is automatically re-rendered and the new value is available as a `prop` with the same name (`this.props.timer` in the example above).  This is along the same lines as how `reaction`s are used in `re-frame`/`reagent`.
 
 Beacuse `Views` are just decorated React components, you can still keep local state, use lifecycle methods, etc.
+
+Projections can also be parameterized with `props` values:
+
+```js
+static projections = props => ({
+    page: db => db.getIn(['pages', props.pageNumber])
+});
+```
+
+In this example, `projections` defines a function that takes `props` as a parameter and returns an object of the same form as a normal `projections` definition.
 
 ### Commands
 

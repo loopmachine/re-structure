@@ -35,11 +35,31 @@ export function View(DecoratedComponent) {
         subscriptions = {};
 
         componentWillMount() {
-            if (DecoratedComponent.projections === undefined) {
-                return;
-            }
             if (updates === undefined) {
                 throw Error('Application db has not yet been initialized. Start with initApp(db).');
+            }
+            this.subscribeToProjections(this.props);
+        }
+        componentWillReceiveProps(nextProps) {
+            // ignore projections that aren't parameterized with props
+            if (typeof DecoratedComponent.projections !== 'function') {
+                return;
+            }
+            // re-subscribe when props have changed
+            if (!objectEquals(this.props, nextProps)) {
+                this.unsubscribeFromProjections();
+                this.subscribeToProjections(nextProps);
+            }
+        }
+        componentWillUnmount() {
+            this.unsubscribeFromProjections();
+        }
+        shouldComponentUpdate(nextProps, nextState) {
+            return !objectEquals(this.props, nextProps) || !objectEquals(this.state, nextState);
+        }
+        subscribeToProjections(props) {
+            if (DecoratedComponent.projections === undefined) {
+                return;
             }
 
             let declarations = {};
@@ -47,7 +67,7 @@ export function View(DecoratedComponent) {
                 declarations = DecoratedComponent.projections;
             }
             if (typeof DecoratedComponent.projections === 'function') {
-                declarations = DecoratedComponent.projections(this.props);
+                declarations = DecoratedComponent.projections(props);
             }
             for (let name of Object.keys(declarations)) {
                 let projectionFn = declarations[name];
@@ -60,13 +80,10 @@ export function View(DecoratedComponent) {
                     }));
             }
         }
-        componentWillUnmount() {
+        unsubscribeFromProjections() {
             for (let name of Object.keys(this.subscriptions)) {
-                this.subscriptions[name].unsubscribe();
+                this.subscriptions[name]();
             }
-        }
-        shouldComponentUpdate(nextProps, nextState) {
-            return !objectEquals(this.props, nextProps) || !objectEquals(this.state, nextState);
         }
         render() {
             return <DecoratedComponent {...this.props} {...this.state} />
