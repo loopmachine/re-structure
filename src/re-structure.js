@@ -14,7 +14,7 @@ export function initApp(db, debug=false) {
     updates = commands.scan(db, handleCommand).skipDuplicates();
     if (debug) {
         debugEnabled = true;
-        updates.onValue(db => console.log("db: %c" + prettyPrint(db.toJS()), "color:green;"));
+        updates.onValue(db => console.log("db: %c" + prettyPrint(db), "color:green;"));
     }
 }
 
