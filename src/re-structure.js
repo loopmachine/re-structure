@@ -19,6 +19,9 @@ export function initApp(db, debug=false) {
 }
 
 export function emit(command, ...params) {
+    if (typeof command !== 'function') {
+        throw Error('a valid command fuction was not provided to emit. command params:' + prettyPrint(params));
+    }
     if (debugEnabled) {
         let output = `${command.name}(${params.map(param => prettyPrint(param)).join(', ')})`;
         console.log("command: %c" + output, "color:blue;");
@@ -36,7 +39,7 @@ export function View(DecoratedComponent) {
 
         componentWillMount() {
             if (updates === undefined) {
-                throw Error('Application db has not yet been initialized. Start with initApp(db).');
+                throw Error('application db has not yet been initialized. Start with initApp(db).');
             }
             this.subscribeToProjections(this.props);
         }
