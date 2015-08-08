@@ -19,6 +19,18 @@ export function initApp(db, debug=false) {
 }
 
 export function emit(command, ...params) {
+    validateCommand(command, params);
+    commands.push({command, params});
+}
+
+export function emitWithPath(path) {
+    return function emit(command, ...params) {
+        validateCommand(command, params);
+        commands.push({command, params, path});
+    }
+}
+
+function validateCommand(command, ...params) {
     if (typeof command !== 'function') {
         throw Error('a valid command fuction was not provided to emit. command params:' + prettyPrint(params));
     }
@@ -26,10 +38,13 @@ export function emit(command, ...params) {
         let output = `${command.name}(${params.map(param => prettyPrint(param)).join(', ')})`;
         console.log("command: %c" + output, "color:blue;");
     }
-    commands.push({command, params});
 }
 
-function handleCommand(db, {command, params}) {
+function handleCommand(db, {command, params, path}) {
+    if (path) {
+        // swap a subset of the db at the location referred to by path
+        return db.updateIn(path, db => command(db, ...params))
+    }
     return command(db, ...params);
 }
 
