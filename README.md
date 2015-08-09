@@ -16,13 +16,13 @@ npm install
 npm run examples
 ```
 
-Simple time/color example from `reagent`
+Simple time/color [example](examples/simple) from `reagent`
 : http://localhost:8000/simple.bundle
 
-TodoMVC:
+TodoMVC [example](examples/todomvc)
 : http://localhost:8000/todomvc.bundle
 
-Application "pages":
+Application "pages" [example](examples/pages)
 : http://localhost:8000/pages.bundle
 
 ## Concepts
