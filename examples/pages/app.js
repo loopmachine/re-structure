@@ -1,10 +1,10 @@
 import React from 'react';
 import {initApp, emit} from '../../src/re-structure';
 
-import db, {updateTimer} from './db';
-import App from './views/App.jsx';
+import {initDb} from './db';
+import Pages from './Pages.jsx';
 
-initApp(db);
+initApp(initDb());
 
 // render the app
-React.render(<App />, document.body);
+React.render(<Pages />, document.body);
