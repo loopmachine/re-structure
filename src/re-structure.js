@@ -79,13 +79,16 @@ export function View(DecoratedComponent) {
             if (DecoratedComponent.projections === undefined) {
                 return;
             }
-
             let declarations = {};
             if (typeof DecoratedComponent.projections === 'object') {
                 declarations = DecoratedComponent.projections;
             }
             if (typeof DecoratedComponent.projections === 'function') {
                 declarations = DecoratedComponent.projections(props);
+                if (declarations === undefined) {
+                    console.error('projections declaration return value is undefined. did you forget to surround returned obj with parens?');
+                    declarations = {};
+                }
             }
             for (let name of Object.keys(declarations)) {
                 let projectionFn = declarations[name];
