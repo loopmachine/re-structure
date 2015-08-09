@@ -19,7 +19,10 @@ npm run examples
 Simple time/color example from `reagent`
 : http://localhost:8000/simple.bundle
 
-Switching between application "pages":
+TodoMVC:
+: http://localhost:8000/todomvc.bundle
+
+Application "pages":
 : http://localhost:8000/pages.bundle
 
 ## Concepts
