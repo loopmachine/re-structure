@@ -1,6 +1,6 @@
 import React from 'react';
-import {View, emit} from '../../../src/re-structure';
-import {timer, timeColor, setTimeColor} from '../db';
+import {View, emit} from '../../src/re-structure';
+import {timer, timeColor, setTimeColor} from './db';
 
 import './simple.css';
 

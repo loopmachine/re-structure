@@ -2,7 +2,7 @@ import React from 'react';
 import {initApp, emit} from '../../src/re-structure';
 
 import db, {updateTimer} from './db';
-import Simple from './views/Simple.jsx';
+import Simple from './Simple.jsx';
 
 // register our db with re-structure. the second param toggles console logging.
 initApp(db, false);
