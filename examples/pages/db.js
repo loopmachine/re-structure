@@ -1,17 +1,52 @@
 import Immutable from 'immutable';
 import {emit} from '../../src/re-structure';
-import {initPage} from './page/page';
 
 export function initDb() {
     return Immutable.fromJS({
         currentPage: '1',
         pages: {
-            '1': initPage({content: "I'm page 1"}),
-            '2': initPage({content: "I'm page 2"})
-        },
-        modificationCount: 0
+            '1': initPage({
+                key: {id: '1'},
+                content: "I'm page 1",
+                sections: {
+                    '1': initPageSection({
+                        key: {id: '1', page: '1'},
+                        body: "I'm section 1"
+                    }),
+                    '2': initPageSection({
+                        key: {id: '2', page: '1'},
+                        body: "I'm section 2"
+                    })
+                }
+            }),
+            '2': initPage({
+                key: {id: '2'},
+                content: "I'm page 2",
+                sections: {
+                    '1': initPageSection({
+                        key: {id: '1', page: '2'},
+                        body: "I'm section 1"
+                    })
+                }
+            })
+        }
     });
 }
+
+function initPage({key, content, sections}) {
+    return Immutable.fromJS({
+        key,
+        content,
+        sections
+    });
+}
+
+export function initPageSection({key, body}) {
+    return Immutable.fromJS({
+        key,
+        body
+    });
+};
 
 // -- projections
 
@@ -21,11 +56,7 @@ export function pages(db) {
 
 export function currentPage(db) {
     let currentPageId = db.get('currentPage');
-    return [currentPageId, db.getIn(['pages', currentPageId])];
-}
-
-export function modificationCount(db) {
-    return db.get('modificationCount');
+    return db.getIn(['pages', currentPageId]);
 }
 
 // -- commands
@@ -34,20 +65,24 @@ export function setCurrentPage(db, {page}) {
     return db.set('currentPage', page);
 }
 
-export function updatePage(path) {
-    return function command(db, command, ...params) {
-        let nextDb = db.updateIn(path, page => command(page, ...params));
-        if (pageModified(path, db, nextDb)) {
-            return incrementmodificationCount(nextDb);
-        }
-        return db;
-    }
+// Page
+
+export function updatePageContent(db, {page, content}) {
+    let key = pagePath(page.get('key'));
+    return db.updateIn(key, page => page.set('content', content));
 }
 
-function pageModified(path, db, nextDb) {
-    return db.getIn(path) !== nextDb.getIn(path);
+function pagePath(key) {
+    return ['pages', key.get('id')];
 }
 
-function incrementmodificationCount(db) {
-    return db.update('modificationCount', n => n+1);
+// PageSection
+
+export function updateSectionBody(db, {section, body}) {
+    let key = pageSectionPath(section.get('key'));
+    return db.updateIn(key, section => section.set('body', body));
+}
+
+function pageSectionPath(key) {
+    return ['pages', key.get('page'), 'sections', key.get('id')];
 }
