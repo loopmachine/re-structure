@@ -12,8 +12,7 @@
         "structure"
     ],
     "dependencies": {
-        "react": "latest",
-        "baconjs": "latest"
+        "react": "latest"
     },
     "devDependencies": {
         "babel": "latest",
@@ -33,8 +32,9 @@
     },
     "main": "lib/re-structure.js",
     "scripts": {
+        "clean": "rm -rf lib",
         "compile": "babel src --out-dir lib",
-        "prepublish": "npm run compile",
+        "prepublish": "npm run clean && npm run compile",
         "examples": "webpack-dev-server --port 8000 --hot --devtool eval-source-map --cache --colors --progress"
     }
 }

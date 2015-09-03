@@ -1,48 +1,38 @@
 import React from 'react';
-import Bacon from 'baconjs';
 
 let debugEnabled = false;
 
-function prettyPrint(obj) {
-    return JSON.stringify(obj, null, 2)
-}
-
-const commands = new Bacon.Bus();
-
-let updates;
+let scanner;
 export function initApp(db, debug=false) {
-    updates = commands.scan(db, handleCommand).skipDuplicates();
+    scanner = scan(db, commandHandler);
     if (debug) {
         debugEnabled = true;
-        updates.onValue(db => console.log("db: %c" + prettyPrint(db), "color:green;"));
+        scanner.subscribe(db => console.log("db: %c" + prettyPrint(db), "color:green;"));
     }
+}
+
+function commandHandler(db, {command, params}) {
+    return command(db, ...params);
 }
 
 export function emit(command, ...params) {
     if (!commandIsvalid(command, params)) {
+        console.error('a valid command fuction was not provided to emit. command params:' + prettyPrint(params));
         return;
     }
-    logCommand(command, params);
-    commands.push({command, params});
+    if (debugEnabled) {
+        logCommand(command, params);
+    }
+    scanner.push({command, params});
 }
 
 function commandIsvalid(command, ...params) {
-    if (typeof command !== 'function') {
-        console.error('a valid command fuction was not provided to emit. command params:' + prettyPrint(params));
-        return false;
-    }
-    return true;
+    return (typeof command === 'function');
 }
 
 function logCommand(command, ...params) {
-    if (debugEnabled) {
-        let output = `${command.name}(${params.map(param => prettyPrint(param)).join(', ')})`;
-        console.log("command: %c" + output, "color:blue;");
-    }
-}
-
-function handleCommand(db, {command, params}) {
-    return command(db, ...params);
+    let output = `${command.name}(${params.map(param => prettyPrint(param)).join(', ')})`;
+    console.log("command: %c" + output, "color:blue;");
 }
 
 export function View(DecoratedComponent) {
@@ -50,7 +40,7 @@ export function View(DecoratedComponent) {
         subscriptions = {};
 
         componentWillMount() {
-            if (updates === undefined) {
+            if (scanner === undefined) {
                 throw Error('application db has not yet been initialized. Start with initApp(db).');
             }
             this.subscribeToProjections(this.props);
@@ -89,13 +79,14 @@ export function View(DecoratedComponent) {
             }
             for (let name of Object.keys(declarations)) {
                 let projectionFn = declarations[name];
-                let projection = updates.map(projectionFn);
-
-                this.subscriptions[name] = projection
-                    .skipDuplicates()
-                    .onValue(value => this.setState({
+                if (typeof projectionFn !== 'function') {
+                    console.error('declared projection is not a function: ', name);
+                }
+                this.subscriptions[name] = scanner.subscribe(value => {
+                    this.setState({
                         [name]: value
-                    }));
+                    })
+                }, projectionFn);
             }
         }
         unsubscribeFromProjections() {
@@ -107,6 +98,41 @@ export function View(DecoratedComponent) {
             return <DecoratedComponent {...this.props} {...this.state} />
         }
     }
+}
+
+function scan(initialState, transformFn) {
+    let state = initialState;
+    let subscriptions = [];
+
+    function subscribe(subscriptionFn, projectionFn) {
+        let currentProjection = project(state, projectionFn);
+        subscriptionFn(currentProjection);
+
+        subscriptions.push({subscriptionFn, projectionFn, value: currentProjection});
+        return function unsubscribe() {
+            subscriptions = subscriptions.filter(subscription => subscription.subscriptionFn !== subscriptionFn);
+        }
+    }
+
+    function push(event) {
+        let prevDb = state;
+        state = transformFn(prevDb, event);
+        if (prevDb === state) return;
+
+        subscriptions.forEach(subscription => {
+            let currentProjection = project(state, subscription.projectionFn);
+            if (subscription.value === currentProjection) return;
+
+            subscription.value = currentProjection;
+            subscription.subscriptionFn(currentProjection);
+        });
+    }
+
+    function project(state, projectionFn) {
+        return projectionFn ? projectionFn(state) : state;
+    }
+
+    return {subscribe, push};
 }
 
 function objectEquals(a, b) {
@@ -127,4 +153,8 @@ function objectEquals(a, b) {
         }
     }
     return true;
+}
+
+function prettyPrint(obj) {
+    return JSON.stringify(obj, null, 2)
 }

@@ -5,6 +5,10 @@ import {initApp, emit} from '../../src/re-structure';
 import {initDb, setShowing} from './db';
 import TodoApp from './TodoApp.jsx';
 
+// -- init application db
+
+initApp(initDb());
+
 // -- setup routing
 
 let router = new Rlite();
@@ -18,8 +22,6 @@ function processHash() {
 window.addEventListener('hashchange', processHash);
 processHash();
 
-// -- start the app
-
-initApp(initDb());
+// -- render the app
 
 React.render(<TodoApp />, document.body);
