@@ -67,8 +67,8 @@ In `re-structure` you do this:
 
 ```js
 // project a part of the application db 
-export function timer(db) {
-    return db.get('timer');
+export function timeColor(db) {
+    return db.get('timeColor');
 }
 ```
 
@@ -104,7 +104,15 @@ static projections = props => ({
 });
 ```
 
-In this example, `projections` defines a function that takes `props` as a parameter and returns an object of the same form as a normal `projections` definition.
+In this example, `projections` defines a function that takes `props` as a parameter and defines a `page` projection which projects a part of the application state (located using the `props.pageNumber`).  Note that the `projections` function returns an object that looks like a normal `projections` definition.
+
+Here's how we might declare a projection inline that doesn't need `props`:
+
+```js
+static projections = {
+    pageOne: db => db.getIn(['pages', '1'])
+};
+```
 
 ### Commands
 
