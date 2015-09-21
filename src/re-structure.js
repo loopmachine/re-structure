@@ -1,14 +1,23 @@
 import React from 'react';
 
-let debugEnabled = false;
+let debug;
 
 let scanner;
-export function initApp(db, debug=false) {
+export function initApp(db, debugOptions={logCommands: false, logProjections: false}) {
     scanner = scan(db, commandHandler);
-    if (debug) {
-        debugEnabled = true;
-        scanner.subscribe(db => console.log("db: %c" + prettyPrint(db), "color:green;"));
+
+    if (debugOptions === true) {
+        debug = {logCommands: true, logProjections: true};
+    } else {
+        debug = debugOptions;
     }
+
+    if (!debug.logProjections) {
+        return;
+    }
+    let subscriptionFn = db => console.log("db: %c" + prettyPrint(db), "color:green;")
+    let projectionFn = (typeof debug.logProjections === 'function') ? debug.logProjections : db => db;
+    scanner.subscribe(subscriptionFn, projectionFn);
 }
 
 function commandHandler(db, {command, params}) {
@@ -20,7 +29,7 @@ export function emit(command, ...params) {
         console.error('a valid command fuction was not provided to emit. command params:' + prettyPrint(params));
         return;
     }
-    if (debugEnabled) {
+    if (debug.logCommands) {
         logCommand(command, params);
     }
     scanner.push({command, params});

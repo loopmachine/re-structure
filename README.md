@@ -49,7 +49,15 @@ initApp(db);
 React.render(<App />, document.body);
 ```
 
-`initApp` takes an optional second boolean parameter, which if set tells `re-structure` to log all changes to the db to the developer console.
+`initApp` accepts an optional second parameter which defines debugging options.  If set to `true`, `re-structure` will log all db inputs/commands and db outputs/projections to the developer console.
+
+For more control of what is logged, provide a configuration object of the format: `{logCommands: true, logProjections: false}`.  To log a subset of the application db, provide a projection function as the `logProjections` value:
+
+```
+initApp(db, {logProjections: db => db.get('timer')});
+```
+
+In the example above, the `timer` value will be logged to the console when it changes.
 
 ### Projections
 
